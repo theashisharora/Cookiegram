@@ -1,0 +1,48 @@
+name: Setup Project Branches
+
+on:
+  workflow_dispatch:  # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  create-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all branches
+          
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+      - name: Create dev branch
+        run: |
+          # Check if dev branch exists on remote
+          if git ls-remote --heads origin dev | grep dev; then
+            echo "dev branch already exists"
+          else
+            echo "Creating dev branch from main"
+            git checkout -b dev origin/main
+            git push origin dev
+          fi
+          
+      - name: Create feature branch
+        run: |
+          # Check if feature branch exists on remote
+          if git ls-remote --heads origin feature | grep feature; then
+            echo "feature branch already exists"
+          else
+            echo "Creating feature branch from dev"
+            # Ensure we have the latest dev branch
+            git fetch origin dev || git checkout -b dev origin/main
+            git checkout -b feature dev
+            git push origin feature
+          fi
+          
+      - name: Summary
+        run: |
+          echo "Branch setup complete!"
+          echo "Available branches:"
+          git branch -r

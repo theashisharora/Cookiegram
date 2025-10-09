@@ -6,6 +6,13 @@ Welcome to Cookiegram! This is a capstone project with 5 team members.
 
 This project follows a structured branching strategy to facilitate collaboration:
 
+### Initial Setup
+
+If the `dev` and `feature` branches don't exist yet, run the setup script:
+```bash
+./setup-branches.sh
+```
+
 ### Main Branches
 
 - **`main`** - The production-ready branch containing stable, release-ready code
