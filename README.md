@@ -2,6 +2,10 @@
 
 A capstone project for sharing recipes and connecting food enthusiasts.
 
+## 🚀 First Time Setup
+
+**New to this project?** Follow the [SETUP.md](SETUP.md) guide to create the required branches (`dev` and `feature`).
+
 ## Branches
 
 This project uses the following branch structure:
