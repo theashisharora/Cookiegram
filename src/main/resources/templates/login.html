@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Login - CookieGram</title>
+    <style>
+        body { font-family: system-ui, Arial, sans-serif; background: #fff8f2;
+               display: flex; align-items: center; justify-content: center;
+               min-height: 100vh; color: #3b2b20; }
+        .card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            width: 320px;
+        }
+        label { font-size: .9rem; font-weight: 600; display: block; margin-bottom: .25rem; }
+        input {
+            width: 100%;
+            padding: .6rem .75rem;
+            border-radius: 8px;
+            border: 1px solid #c7b3a2;
+            margin-bottom: 1rem;
+            font-size: .9rem;
+        }
+        button {
+            background: #8b4513;
+            border: none;
+            color: #fff;
+            width: 100%;
+            padding: .7rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .error {
+            color: #b00020;
+            background: #ffe5e5;
+            border: 1px solid #b00020;
+            border-radius: 8px;
+            padding: .5rem .75rem;
+            font-size: .8rem;
+            margin-bottom: 1rem;
+        }
+        .hint {
+            font-size: .8rem;
+            opacity: .8;
+            margin-top: .75rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2 style="margin-top:0;">CookieGram Login 🍪</h2>
+
+    <!-- Spring Security adds ?error on failed login -->
+    <div class="error" th:if="${param.error}">
+        Invalid username or password.
+    </div>
+
+    <!-- Spring Security default login form post target is /login -->
+    <form method="post" action="/login">
+        <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" placeholder="customer / employee / admin"/>
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="pass"/>
+        </div>
+
+        <button type="submit">Sign In</button>
+    </form>
+
+    <div class="hint">
+        Demo users:<br/>
+        customer / pass<br/>
+        employee / pass<br/>
+        admin / pass
+    </div>
+</div>
+</body>
+</html>
