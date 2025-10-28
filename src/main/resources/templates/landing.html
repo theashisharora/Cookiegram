@@ -1,9 +1,94 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>CookieGram</title></head>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>CookieGram</title>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #fff8f2;
+            margin: 0;
+            padding: 2rem;
+            color: #3b2b20;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .login-btn a {
+            background: #8b4513;
+            color: #fff;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        h2 {
+            margin-top: 2rem;
+            font-size: 1.25rem;
+        }
+        .promos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .promo-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .promo-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .empty-state {
+            font-style: italic;
+            color: #6b4d3a;
+            opacity: 0.8;
+        }
+    </style>
+</head>
 <body>
-  <h1>CookieGram</h1>
-  <a href="/login">Log In</a>
-  <section id="promos">Promotions will load here…</section>
+<header>
+    <div class="brand">🍪 CookieGram</div>
+    <div class="login-btn">
+        <a href="/login">Log In</a>
+    </div>
+</header>
+
+<section>
+    <h2>Current Promotions</h2>
+
+    <!-- promotions exist -->
+    <div class="promos-grid" th:if="${promotions != null and !promotions.isEmpty()}">
+        <div class="promo-card" th:each="promo : ${promotions}">
+            <img th:src="${promo.imageUrl}" alt="Promo image"/>
+            <h3 th:text="${promo.title}">Promo Title</h3>
+            <p th:text="${promo.description}">Promo description</p>
+        </div>
+    </div>
+
+    <!-- no promotions -->
+    <p class="empty-state"
+       th:if="${promotions == null || promotions.isEmpty()}">
+        We’re baking something fresh — check back soon!
+    </p>
+</section>
+
+<footer style="margin-top:3rem; font-size:0.8rem; color:#6b4d3a;">
+    © CookieGram. Send cookies, send love.
+</footer>
 </body>
 </html>
