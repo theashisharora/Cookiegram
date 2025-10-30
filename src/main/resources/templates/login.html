@@ -1,84 +1,135 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <title>Login - CookieGram</title>
-    <style>
-        body { font-family: system-ui, Arial, sans-serif; background: #fff8f2;
-               display: flex; align-items: center; justify-content: center;
-               min-height: 100vh; color: #3b2b20; }
-        .card {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            width: 320px;
-        }
-        label { font-size: .9rem; font-weight: 600; display: block; margin-bottom: .25rem; }
-        input {
-            width: 100%;
-            padding: .6rem .75rem;
-            border-radius: 8px;
-            border: 1px solid #c7b3a2;
-            margin-bottom: 1rem;
-            font-size: .9rem;
-        }
-        button {
-            background: #8b4513;
-            border: none;
-            color: #fff;
-            width: 100%;
-            padding: .7rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .error {
-            color: #b00020;
-            background: #ffe5e5;
-            border: 1px solid #b00020;
-            border-radius: 8px;
-            padding: .5rem .75rem;
-            font-size: .8rem;
-            margin-bottom: 1rem;
-        }
-        .hint {
-            font-size: .8rem;
-            opacity: .8;
-            margin-top: .75rem;
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Login • CookieGram</title>
+  <style>
+    :root{
+      --bg:#f9dca4;      /* page background */
+      --dot:#eec48a;     /* small dots */
+      --ring:#f7e4bf;    /* ring circles */
+      --panel:#cfa16f;   /* card */
+      --panel-d:#b98c59; /* button */
+      --ink:#3b2b20;     /* text */
+      --muted:#6b4d3a;   /* sub text */
+      --line:#ac8457;    /* shadow line */
+      --field:#f7e7c7;   /* input bg */
+    }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{
+      min-height:100vh; font-family:system-ui,Segoe UI,Arial,sans-serif;
+      color:var(--ink); background:var(--bg); position:relative; overflow-x:hidden;
+      display:flex; flex-direction:column;
+    }
+
+    /* background circles */
+    .bg-shapes span{
+      position:absolute; border-radius:50%; opacity:.55;
+      pointer-events:none; filter:drop-shadow(0 2px 0 rgba(0,0,0,.06));
+    }
+    .dot{ background:var(--dot); }
+    .ring{ border:8px solid var(--ring); background:transparent; }
+    .bg-shapes .s1{ width:56px; height:56px; top:54px; left:28px }
+    .bg-shapes .s2{ width:40px; height:40px; top:120px; right:56px }
+    .bg-shapes .s3{ width:28px; height:28px; top:220px; left:18% }
+    .bg-shapes .s4{ width:28px; height:28px; top:66%; right:12% }
+    .bg-shapes .s5{ width:72px; height:72px; bottom:120px; left:6% }
+    .bg-shapes .s6{ width:80px; height:80px; top:40%; right:6% }
+
+    /* login panel */
+    .wrap{flex:1; display:grid; place-items:center; padding:2rem 1rem}
+    .card{
+      width:min(420px,92vw); background:var(--panel); color:#fff;
+      border-radius:18px; padding:26px 26px 22px; position:relative;
+      box-shadow:0 10px 0 var(--line), 0 8px 24px rgba(0,0,0,.15);
+    }
+    h1{margin:0 0 16px; text-align:center; font-size:1.9rem}
+    .field{margin:.6rem 0}
+    label{display:block; font-weight:600; margin:0 0 .35rem}
+    input{
+      width:100%; padding:.7rem .9rem; border-radius:10px; border:none;
+      background:var(--field); color:#3b2b20; font-size:1rem; outline:none;
+    }
+    .btn{
+      width:100%; margin-top:.8rem; background:var(--panel-d); color:#fff;
+      border:none; padding:.75rem; border-radius:10px; font-weight:800; letter-spacing:.5px;
+      cursor:pointer;
+    }
+    .btn:hover{ filter:brightness(.95) }
+    .error{
+      background:#ffe8e8; color:#7d1212; border:1px solid #e2a3a3;
+      padding:.6rem .8rem; border-radius:10px; font-size:.9rem; margin-bottom:.6rem;
+    }
+    .meta{
+      margin-top:.7rem; text-align:center; color:#fff; font-size:.9rem;
+    }
+    .meta a{ color:#fff; font-weight:700; text-decoration:underline }
+    footer{
+      background:#fdeed4; border-top:1px solid #f2d9b7; color:var(--muted);
+    }
+    .footer-inner{
+      max-width:1000px; margin:0 auto; padding:16px; text-align:center; font-size:.95rem;
+    }
+    .links{display:flex; gap:1rem; justify-content:center; margin:.4rem 0 8px}
+    .links a{color:var(--muted); text-decoration:none}
+    @media (max-width:480px){ h1{font-size:1.6rem} }
+  </style>
 </head>
 <body>
-<div class="card">
-    <h2 style="margin-top:0;">CookieGram Login 🍪</h2>
 
-    <!-- Spring Security adds ?error on failed login -->
-    <div class="error" th:if="${param.error}">
-        Invalid username or password.
-    </div>
+  <!-- decorative background -->
+  <div class="bg-shapes">
+    <span class="dot s1"></span>
+    <span class="ring s2"></span>
+    <span class="dot s3"></span>
+    <span class="dot s4"></span>
+    <span class="ring s5"></span>
+    <span class="ring s6"></span>
+  </div>
 
-    <!-- Spring Security default login form post target is /login -->
-    <form method="post" action="/login">
-        <div>
-            <label for="username">Username</label>
-            <input id="username" name="username" placeholder="customer / employee / admin"/>
+  <main class="wrap">
+    <section class="card">
+      <h1>Login Now</h1>
+
+      <!-- Show Spring Security error on bad login -->
+      <div class="error" th:if="${param.error}">
+        Invalid username or password. Please try again.
+      </div>
+      <div class="error" th:if="${param.logout}">
+        You have been logged out.
+      </div>
+
+      <!-- Spring Security default POST target is /login -->
+      <form method="post" action="/login">
+        <!-- If you enable CSRF later, uncomment:
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        -->
+        <div class="field">
+          <label for="username">Email or Username</label>
+          <input id="username" name="username" placeholder="customer / employee / admin" autocomplete="username" required/>
         </div>
-
-        <div>
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="pass"/>
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" placeholder="pass" autocomplete="current-password" required/>
         </div>
+        <button class="btn" type="submit">LOGIN</button>
+      </form>
 
-        <button type="submit">Sign In</button>
-    </form>
+      <div class="meta">
+        Not a member?
+        <a href="#" title="Sign up (coming soon)">Signup now</a>
+      </div>
+    </section>
+  </main>
 
-    <div class="hint">
-        Demo users:<br/>
-        customer / pass<br/>
-        employee / pass<br/>
-        admin / pass
+  <footer>
+    <div class="footer-inner">
+      <div class="links">
+        <a href="#">About</a><a href="#">Pricing</a><a href="#">Gallery</a><a href="#">Team</a>
+      </div>
+      <div>© <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> CookieGram Customer Portal | All rights reserved.</div>
     </div>
-</div>
+  </footer>
 </body>
 </html>

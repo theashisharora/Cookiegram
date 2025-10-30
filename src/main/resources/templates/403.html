@@ -1,15 +1,32 @@
 <!doctype html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <title>Access Denied - CookieGram</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>403 • CookieGram</title>
+  <style>
+    :root{--ink:#1f1b16;--muted:#6b6b6b;--bg:#f6f6f7;--card:#ffffff;--line:#ececec;}
+    *{box-sizing:border-box} html,body{margin:0}
+    body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:900px;margin:24px auto;padding:0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:32px;
+          box-shadow:0 12px 28px rgba(0,0,0,.08)}
+    h1{margin:0 0 6px;font-size:2.4rem}
+    .copy{color:var(--muted);max-width:60ch;line-height:1.6}
+    .btn{margin-top:18px;display:inline-block;background:#fff;border:2px solid #e3e3e3;color:#111;
+         padding:.7rem 1.2rem;border-radius:12px;font-weight:800;box-shadow:0 3px 0 #e3e3e3;cursor:pointer}
+  </style>
 </head>
-<body style="font-family:system-ui,Arial,sans-serif;background:#fff8f2;padding:2rem;text-align:center;">
-    <h1 style="color:#8b4513;">🚫 403 - Access Denied</h1>
-    <p>You tried to access a page you’re not allowed to see.</p>
-    <p style="font-size:.9rem;opacity:.8;">
-        (This is our security rainy-day path for Sprint 1.)
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>403 • Crumbs Only</h1>
+    <p class="copy">
+      You don’t have access to this page. Try logging in with the correct role,
+      or head back to the home page.
     </p>
-    <p><a href="/">Back to Home</a> | <a href="/login">Log In with a different account</a></p>
+    <button class="btn" onclick="location.href='/'">Go Home</button>
+  </div>
+</div>
 </body>
 </html>
