@@ -1,17 +1,138 @@
 <!doctype html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <title>Employee Dashboard - CookieGram</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Employee • Orders • CookieGram</title>
+  <style>
+    :root{
+      --bg:#fff3e0; --panel:#5a3a28; --ink:#3b2b20; --muted:#6b4d3a; --line:#efd9bd;
+      --chip:#ffe9c7; --card:#fff7ea; --badge:#f5d39f; --btn:#ffefcf; --shadow:0 10px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box} html,body{margin:0} body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1100px;margin:26px auto;padding:0 16px}
+
+    /* top bar tabs */
+    .top{background:var(--panel);color:#fff;border-radius:10px;padding:12px 14px;box-shadow:var(--shadow)}
+    .tabs{display:flex;gap:.6rem;flex-wrap:wrap}
+    .chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid var(--line);color:var(--panel);
+      padding:.5rem .85rem;border-radius:999px;font-weight:700}
+    .chip.active{background:var(--chip)}
+
+    .section-title{margin:18px 0 6px;text-align:center;font-size:1.5rem;font-weight:800}
+    .sub{margin:0 0 14px;text-align:center;color:var(--muted);font-size:.95rem}
+
+    /* 2-col layout */
+    .grid{display:grid;grid-template-columns:1.5fr .9fr;gap:18px}
+    @media (max-width:880px){ .grid{grid-template-columns:1fr} }
+
+    /* current order card */
+    .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+    .card.soft{background:var(--card)}
+    .pad{padding:16px}
+    .h{font-size:1.35rem;font-weight:800;margin:2px 0 10px}
+    .order-id{color:#a26e43;text-decoration:underline;cursor:default}
+
+    .stages{display:flex;gap:.5rem;flex-wrap:wrap;margin:10px 0 14px}
+    .stage{background:var(--btn);border:1px solid var(--line);border-radius:999px;padding:.35rem .7rem;display:inline-flex;gap:.35rem;align-items:center}
+    .stage .dot{width:10px;height:10px;border-radius:50%;background:#8bc877}
+    .stage.prep .dot{background:#f2b24c}
+    .stage.ship .dot{background:#8fb7ff}
+
+    .items{display:flex;flex-direction:column;gap:.55rem;margin:8px 0 12px}
+    .row{display:flex;align-items:center;gap:.6rem}
+    .pill{flex:1;background:#fff; border:1px solid var(--line);border-radius:999px;padding:.5rem .8rem}
+    .qty{width:42px;text-align:center;background:var(--badge);border-radius:12px;padding:.35rem 0;font-weight:800;color:#4b3726;border:1px solid var(--line)}
+
+    .info{display:grid;grid-template-columns:1fr auto;gap:.8rem;align-items:stretch;margin-top:8px}
+    .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem}
+    .price{width:140px;text-align:center;background:var(--btn);border:1px solid var(--line);border-radius:12px;padding:.6rem .4rem}
+    .tot{font-size:1.35rem;font-weight:900}
+    .curr{font-size:.8rem;color:#6a5647}
+
+    /* side lists */
+    .stack{display:flex;flex-direction:column;gap:12px}
+    .list{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .list h4{margin:0;background:#fff8ea;border-bottom:1px solid var(--line);padding:10px 12px;font-size:1rem}
+    .cell{padding:10px 12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+    .cell:first-of-type{border-top:none}
+    .link{color:#a26e43;text-decoration:underline}
+
+    /* mini header within side column */
+    .small-note{color:var(--muted);font-size:.85rem;text-align:center;margin:2px 0 10px}
+  </style>
 </head>
-<body style="font-family:system-ui,Arial,sans-serif;background:#fff8f2;padding:2rem;">
-<h1>👩‍🍳 Employee Dashboard</h1>
-<p>Today’s Orders (placeholder)</p>
-<ul>
-    <li>#1234 - “Send to Mom” - Status: Pending</li>
-    <li>#1235 - “Anniversary Pack” - Status: Baking</li>
-</ul>
-<p>Production Capacity: 85% (placeholder)</p>
-<p><a href="/">Back to Home</a> | <a href="/logout">Log Out</a></p>
+<body>
+<div class="wrap">
+
+  <!-- Tabs -->
+  <div class="top">
+    <div class="tabs">
+      <a class="chip" href="/employee">🧭 Dashboard</a>
+      <span class="chip active">🔒 orders</span>
+      <a class="chip" href="/admin">🍪 products</a>
+    </div>
+  </div>
+
+  <h2 class="section-title">orders list</h2>
+  <p class="sub">active orders of last hour till now</p>
+
+  <div class="grid">
+
+    <!-- left: current order -->
+    <div class="card soft">
+      <div class="pad">
+        <div class="h">Current order <span class="order-id">2934u8ju</span></div>
+        <p class="sub" style="margin-top:-6px">process of current order from preparing to delivery</p>
+
+        <div class="stages">
+          <div class="stage"><span class="dot"></span> received</div>
+          <div class="stage prep"><span class="dot"></span> prepared</div>
+          <div class="stage ship"><span class="dot"></span> shipped</div>
+        </div>
+
+        <div class="items">
+          <div class="row"><div class="pill">Vanilla</div><div class="qty">3</div></div>
+          <div class="row"><div class="pill">Ninja Fruit</div><div class="qty">1</div></div>
+          <div class="row"><div class="pill">Chocolate Chip</div><div class="qty">2</div></div>
+          <div class="row"><div class="pill">Mango</div><div class="qty">2</div></div>
+        </div>
+
+        <div class="info">
+          <div class="box">
+            <div style="font-weight:800;margin-bottom:4px">Delivering address</div>
+            <div>street 123 area 2</div>
+            <div style="margin-top:6px;font-size:.95rem">Phone &nbsp; <strong>+1 123 456 7890</strong></div>
+          </div>
+          <div class="price">
+            <div class="tot">86.09</div>
+            <div class="curr">CAD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- right: lists -->
+    <div class="stack">
+
+      <div class="list">
+        <h4>Orders list</h4>
+        <div class="small-note">next orders that is</div>
+        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
+        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
+        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
+        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
+      </div>
+
+      <div class="list">
+        <h4>Shipped orders</h4>
+        <div class="small-note">orders that has been shipped within 40 min</div>
+        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
+        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
 </body>
 </html>
