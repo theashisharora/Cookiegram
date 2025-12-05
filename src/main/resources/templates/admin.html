@@ -1,168 +1,325 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Admin • CookieGram</title>
-  <style>
-    :root{
-      --bg:#fff3d6; --panel:#b07a4f; --panel-2:#e6caa3; --ink:#3b2b20;
-      --muted:#6b4d3a; --line:#e3d2b7; --chip:#f6e7c9; --btn:#5b3a24; --btn2:#cc9a62;
-    }
-    *{box-sizing:border-box} html,body{margin:0}
-    body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CookieGram</title>
+    <!-- Importing Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Importing Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    /* Top bar with tabs */
-    .top{background:#5a3a28;color:#fff;border-radius:8px;padding:14px 16px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-    .tabs{display:flex;gap:.6rem;flex-wrap:wrap}
-    .chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid #f0dfc5;color:#5a3a28;
-      padding:.5rem .8rem;border-radius:999px;font-weight:600}
-    .chip.active{background:var(--chip)}
-    .title{margin:16px 0 10px;text-align:center;font-size:1.6rem;font-weight:800}
+    <style>
+        :root {
+            --primary: #5D4037; /* Deep Chocolate */
+            --primary-hover: #4E342E;
+            --secondary: #8D6E63; /* Milk Chocolate */
+            --accent: #FF7043; /* Warm Cookie Glow */
+            --bg-color: #F5F5F5;
+            --card-bg: #FFFFFF;
+            --text-main: #2D2D2D;
+            --text-light: #666666;
+            --border-color: #E0E0E0;
+        }
 
-    /* Main card */
-    .card{background:var(--panel);border-radius:10px;padding:18px;color:#fff;border:1px solid rgba(0,0,0,.05)}
-    .sub{background:var(--panel-2);color:#3b2b20;border-radius:10px;padding:6px 12px;font-weight:700;display:inline-block;margin-bottom:10px}
-    .box{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
 
-    /* Table */
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:14px;border-bottom:1px solid var(--line);text-align:left}
-    th{background:#fff8ea;font-weight:700;color:#4b3726}
-    tr:last-child td{border-bottom:none}
-    .num{font-weight:800}
-    .actions{display:flex;gap:.8rem;justify-content:center}
-    .icon-btn{background:#fff;border:1px solid var(--line);border-radius:8px;padding:.35rem .55rem;cursor:pointer}
-    .icon-btn:hover{filter:brightness(.95)}
+        /* --- Navbar --- */
+        .navbar {
+            background: var(--card-bg);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* Add product form */
-    .section{margin-top:24px}
-    .hint{color:#2d241c;opacity:.9;text-align:center;margin:.4rem 0 1rem}
-    .form-row{display:flex;gap:.6rem;flex-wrap:wrap}
-    input,textarea{
-      width:100%;padding:.7rem .9rem;border-radius:12px;border:1px solid var(--line);background:#fff8ea;color:#3b2b20
-    }
-    input[name="name"]{flex:1}
-    input[name="price"]{width:120px}
-    textarea{min-height:120px;resize:vertical}
-    .btns{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}
-    .btn{border:none;border-radius:10px;padding:.6rem .95rem;font-weight:800;color:#fff;cursor:pointer}
-    .btn.dark{background:var(--btn)}
-    .btn.light{background:var(--btn2);color:#3b2b20}
-    .pill{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid var(--line);
-      padding:.4rem .7rem;border-radius:999px}
-    .files{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.6rem;justify-content:center}
-    .files .x{cursor:pointer;opacity:.6}
-    @media (max-width:700px){
-      th:nth-child(2), td:nth-child(2){display:none} /* hide #orders on small screens */
-      .title{font-size:1.35rem}
-    }
-  </style>
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .brand i { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+
+        .btn-logout {
+            color: #d32f2f;
+            background: #ffebee;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        .btn-logout:hover { background: #ffcdd2; }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        header {
+            margin-bottom: 32px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        header p {
+            margin: 4px 0 0;
+            color: var(--text-light);
+            font-size: 15px;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #FAFAFA;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Tables --- */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 16px 24px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #FAFAFA;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #FAFAFA;
+        }
+
+        /* Badge for Status */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background-color: #eee;
+            color: #555;
+        }
+
+        /* Status Colors (Optional ThymeLeaf logic can apply these classes) */
+        .status-NEW { background: #E3F2FD; color: #1565C0; }
+        .status-DELIVERED { background: #E8F5E9; color: #2E7D32; }
+        .status-CANCELLED { background: #FFEBEE; color: #C62828; }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: var(--secondary);
+            opacity: 0.5;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; }
+            .container { padding: 0 16px; margin: 24px auto; }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- Tabs -->
-  <div class="top">
-    <div class="tabs">
-      <a class="chip" href="/admin">🏠 Dashboard</a>
-      <span class="chip active">🍪 products</span>
-      <a class="chip" href="#">🎁 offers</a>
+<!-- Navigation -->
+<nav class="navbar">
+    <a href="/" class="brand">
+        <i class="fa-solid fa-cookie-bite"></i>
+        <span>CookieGram Admin</span>
+    </a>
+    
+    <div class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/admin" class="nav-link active">Dashboard</a>
+        
+        <form th:action="@{/logout}" method="post" style="margin:0;">
+            <button type="submit" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </form>
     </div>
-  </div>
+</nav>
 
-  <h2 class="title">Products</h2>
+<div class="container">
 
-  <!-- All Products -->
-  <div class="card">
-    <span class="sub">All Products</span>
-    <div class="box">
-      <!-- If you already have a products list on the model, this will render it. Otherwise static rows below act as placeholders -->
-      <table>
-        <thead>
-          <tr>
-            <th>product name</th>
-            <th># orders</th>
-            <th>added since</th>
-            <th>price</th>
-            <th style="text-align:center">Edit</th>
-            <th style="text-align:center">Delete</th>
-          </tr>
-        </thead>
-        <tbody th:if="${products != null}">
-          <tr th:each="p : ${products}">
-            <td th:text="${p.name}">Vanilla</td>
-            <td class="num" th:text="${p.orderCount}">32</td>
-            <td th:text="${#temporals.format(p.createdAt,'MMM yyyy')}">Nov 2023</td>
-            <td th:text="${'CAD ' + #numbers.formatDecimal(p.price,1,2)}">CAD 9</td>
-            <td class="actions">
-              <form th:action="@{'/admin/products/' + ${p.id} + '/edit'}" method="get">
-                <button class="icon-btn" title="edit">✎</button>
-              </form>
-            </td>
-            <td class="actions">
-              <form th:action="@{'/admin/products/' + ${p.id} + '/delete'}" method="post">
-                <!-- CSRF if enabled -->
-                <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
-                <button class="icon-btn" title="delete">🗑️</button>
-              </form>
-            </td>
-          </tr>
-        </tbody>
+    <header>
+        <h1>Admin Dashboard</h1>
+        <p>Oversee order logistics and manage marketing promotions.</p>
+    </header>
 
-        <!-- Placeholder rows for Sprint-1 if you don't have a model yet -->
-        <tbody th:if="${products == null}">
-          <tr><td>Vanilla</td><td class="num">32</td><td>Nov 2023</td><td>CAD 9</td>
-              <td class="actions"><button class="icon-btn">✎</button></td>
-              <td class="actions"><button class="icon-btn">🗑️</button></td></tr>
-          <tr><td>Chocolate Chip</td><td class="num">15</td><td>Oct 2024</td><td>CAD 10</td>
-              <td class="actions"><button class="icon-btn">✎</button></td>
-              <td class="actions"><button class="icon-btn">🗑️</button></td></tr>
-          <tr><td>Ninja Fruits</td><td class="num">6</td><td>Jan 2024</td><td>CAD 12</td>
-              <td class="actions"><button class="icon-btn">✎</button></td>
-              <td class="actions"><button class="icon-btn">🗑️</button></td></tr>
-          <tr><td>Mango</td><td class="num">7</td><td>Mar 2023</td><td>CAD 5</td>
-              <td class="actions"><button class="icon-btn">✎</button></td>
-              <td class="actions"><button class="icon-btn">🗑️</button></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Add product -->
-    <div class="section">
-      <h3 class="title" style="color:#fff;margin-top:18px;">Add product</h3>
-      <p class="hint">add new product to your products list</p>
-
-      <!-- This POST is a stub for Sprint-2; in Sprint-1 it can be a no-op -->
-      <form class="box" th:action="@{/admin/products}" method="post" enctype="multipart/form-data">
-        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
-        <div style="padding:14px">
-          <div class="form-row">
-            <input name="name" placeholder="write product name" required/>
-            <input name="price" placeholder="price" type="number" step="0.01" min="0" required/>
-          </div>
-          <div class="form-row" style="margin-top:.6rem">
-            <textarea name="description" placeholder="write product description"></textarea>
-          </div>
-
-          <div class="files">
-            <span class="pill">📷 image92348.jpg <span class="x">✖</span></span>
-            <span class="pill">📷 image18348.jpg <span class="x">✖</span></span>
-          </div>
-
-          <div class="btns">
-            <label class="btn light" style="cursor:pointer">
-              <input type="file" name="images" accept="image/*" multiple style="display:none"/>
-              add images
-            </label>
-            <button class="btn dark" type="submit">add product</button>
-          </div>
+    <!-- ORDERS SECTION -->
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fa-solid fa-cart-shopping"></i> Recent Orders</h2>
         </div>
-      </form>
-    </div>
-  </div>
 
+        <div class="table-responsive">
+            <table th:if="${orders != null and !orders.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Sender</th>
+                    <th>Recipient</th>
+                    <th>Cookie Type</th>
+                    <th>Qty</th>
+                    <th>Delivery Date</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="o : ${orders}">
+                    <td style="font-family: monospace; color: var(--text-light);" th:text="${'#' + o.id}">#101</td>
+                    <td th:text="${o.senderName}">Alice</td>
+                    <td th:text="${o.recipientName}">Bob</td>
+                    <td>
+                        <i class="fa-solid fa-cookie" style="color: var(--secondary); margin-right: 6px;"></i>
+                        <span th:text="${o.cookieType}">Choco Chip</span>
+                    </td>
+                    <td th:text="${o.quantity}">2</td>
+                    <td th:text="${o.deliveryDate}">2025-11-22</td>
+                    <td>
+                        <span class="status-badge" th:text="${o.status}">NEW</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="empty-state" th:if="${orders == null or orders.isEmpty()}">
+                <i class="fa-regular fa-folder-open"></i>
+                <p>No orders found yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMOTIONS SECTION -->
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fa-solid fa-bullhorn"></i> Active Promotions</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table th:if="${promotions != null && !promotions.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${promotions}">
+                    <td style="font-family: monospace; color: var(--text-light);" th:text="${'#' + p.id}">#1</td>
+                    <td style="font-weight: 500;" th:text="${p.title}">Holiday Special</td>
+                    <td th:text="${p.startDate}">2025-11-13</td>
+                    <td th:text="${p.endDate}">2025-11-21</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="empty-state" th:if="${promotions == null or promotions.isEmpty()}">
+                <i class="fa-regular fa-calendar-xmark"></i>
+                <p>No active promotions available.</p>
+            </div>
+        </div>
+    </div>
 </div>
+
 </body>
 </html>

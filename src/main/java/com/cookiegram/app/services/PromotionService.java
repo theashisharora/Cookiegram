@@ -25,4 +25,8 @@ public class PromotionService {
 		promotionRepository.save(promotion);
 	}
 	
+	public List<Promotion> findAll() {
+	    return promotionRepository.findAll();
+	}
+
 }

@@ -1,23 +1,23 @@
-# ---- Build stage ----
-FROM maven:3.9.8-eclipse-temurin-17 AS build
+# 1. Build stage (optional but nice for CI/CD)
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy Maven metadata first to leverage caching
+# Copy pom and source
 COPY pom.xml .
-RUN mvn -q -DskipTests dependency:go-offline
-
-# Now copy source and build
 COPY src ./src
-RUN mvn -q -DskipTests package
 
-# ---- Runtime stage ----
-FROM eclipse-temurin:17-jre
+# Package without tests
+RUN mvn clean package -DskipTests
+
+# 2. Runtime image
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
-# copy the fat jar produced by Spring Boot
-COPY --from=build /app/target/*.jar app.jar
+# Copy jar from build stage
+COPY --from=build /app/target/cookiegram-0.0.1-SNAPSHOT.jar app.jar
 
-# Koyeb injects PORT; Spring should read it
-# (ensure in application.properties: server.port=${PORT:8080})
+# Expose port
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+
+# Run the app
+ENTRYPOINT ["java","-jar","app.jar"]

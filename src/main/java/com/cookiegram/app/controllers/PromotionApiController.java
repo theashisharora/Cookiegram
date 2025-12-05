@@ -18,7 +18,7 @@ public class PromotionApiController {
 
 	private final PromotionService service;
 
-	@GetMapping("/api/promotions/active")
+	@GetMapping("/active")
 	public List<Promotion> getActivePromotions() {
 		return service.getActivePromotions();
 	}

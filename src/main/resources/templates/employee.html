@@ -1,138 +1,463 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Employee • Orders • CookieGram</title>
-  <style>
-    :root{
-      --bg:#fff3e0; --panel:#5a3a28; --ink:#3b2b20; --muted:#6b4d3a; --line:#efd9bd;
-      --chip:#ffe9c7; --card:#fff7ea; --badge:#f5d39f; --btn:#ffefcf; --shadow:0 10px 24px rgba(0,0,0,.08);
-    }
-    *{box-sizing:border-box} html,body{margin:0} body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    .wrap{max-width:1100px;margin:26px auto;padding:0 16px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - CookieGram</title>
+    <!-- Importing a nice font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Importing Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #5D4037; /* Deep Chocolate */
+            --primary-hover: #4E342E;
+            --secondary: #8D6E63; /* Milk Chocolate */
+            --accent: #FF7043; /* Warm Cookie Glow */
+            --bg-color: #F5F5F5;
+            --card-bg: #FFFFFF;
+            --text-main: #2D2D2D;
+            --text-light: #666666;
+            --border-color: #E0E0E0;
+            --success-bg: #E8F5E9;
+            --success-text: #2E7D32;
+            --warning-bg: #FFF3E0;
+            --warning-text: #EF6C00;
+            --info-bg: #E3F2FD;
+            --info-text: #1565C0;
+        }
 
-    /* top bar tabs */
-    .top{background:var(--panel);color:#fff;border-radius:10px;padding:12px 14px;box-shadow:var(--shadow)}
-    .tabs{display:flex;gap:.6rem;flex-wrap:wrap}
-    .chip{display:inline-flex;align-items:center;gap:.45rem;background:#fff;border:1px solid var(--line);color:var(--panel);
-      padding:.5rem .85rem;border-radius:999px;font-weight:700}
-    .chip.active{background:var(--chip)}
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
 
-    .section-title{margin:18px 0 6px;text-align:center;font-size:1.5rem;font-weight:800}
-    .sub{margin:0 0 14px;text-align:center;color:var(--muted);font-size:.95rem}
+        /* --- Navigation Bar --- */
+        .navbar {
+            background: var(--card-bg);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* 2-col layout */
-    .grid{display:grid;grid-template-columns:1.5fr .9fr;gap:18px}
-    @media (max-width:880px){ .grid{grid-template-columns:1fr} }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--primary);
+        }
 
-    /* current order card */
-    .card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-    .card.soft{background:var(--card)}
-    .pad{padding:16px}
-    .h{font-size:1.35rem;font-weight:800;margin:2px 0 10px}
-    .order-id{color:#a26e43;text-decoration:underline;cursor:default}
+        .brand i {
+            color: var(--accent);
+        }
 
-    .stages{display:flex;gap:.5rem;flex-wrap:wrap;margin:10px 0 14px}
-    .stage{background:var(--btn);border:1px solid var(--line);border-radius:999px;padding:.35rem .7rem;display:inline-flex;gap:.35rem;align-items:center}
-    .stage .dot{width:10px;height:10px;border-radius:50%;background:#8bc877}
-    .stage.prep .dot{background:#f2b24c}
-    .stage.ship .dot{background:#8fb7ff}
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+        }
 
-    .items{display:flex;flex-direction:column;gap:.55rem;margin:8px 0 12px}
-    .row{display:flex;align-items:center;gap:.6rem}
-    .pill{flex:1;background:#fff; border:1px solid var(--line);border-radius:999px;padding:.5rem .8rem}
-    .qty{width:42px;text-align:center;background:var(--badge);border-radius:12px;padding:.35rem 0;font-weight:800;color:#4b3726;border:1px solid var(--line)}
+        .btn-nav {
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .info{display:grid;grid-template-columns:1fr auto;gap:.8rem;align-items:stretch;margin-top:8px}
-    .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:.6rem .8rem}
-    .price{width:140px;text-align:center;background:var(--btn);border:1px solid var(--line);border-radius:12px;padding:.6rem .4rem}
-    .tot{font-size:1.35rem;font-weight:900}
-    .curr{font-size:.8rem;color:#6a5647}
+        .btn-back {
+            color: var(--text-light);
+            background: transparent;
+            border: 1px solid var(--border-color);
+        }
 
-    /* side lists */
-    .stack{display:flex;flex-direction:column;gap:12px}
-    .list{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-    .list h4{margin:0;background:#fff8ea;border-bottom:1px solid var(--line);padding:10px 12px;font-size:1rem}
-    .cell{padding:10px 12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
-    .cell:first-of-type{border-top:none}
-    .link{color:#a26e43;text-decoration:underline}
+        .btn-back:hover {
+            background: #f0f0f0;
+            color: var(--text-main);
+        }
 
-    /* mini header within side column */
-    .small-note{color:var(--muted);font-size:.85rem;text-align:center;margin:2px 0 10px}
-  </style>
+        .btn-logout {
+            color: #d32f2f;
+            background: #ffebee;
+            border: none;
+        }
+
+        .btn-logout:hover {
+            background: #ffcdd2;
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        header {
+            margin-bottom: 24px;
+        }
+
+        header h2 {
+            font-size: 24px;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        header p {
+            margin: 4px 0 0;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* --- Filters Section --- */
+        .filters-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #fff;
+            min-width: 160px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(141, 110, 99, 0.1);
+        }
+
+        .btn-apply {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            height: 42px; /* Match input height roughly */
+        }
+
+        .btn-apply:hover {
+            background: var(--primary-hover);
+        }
+
+        /* --- Table Section --- */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden; /* For rounded corners */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background: #FAFAFA;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #FAFAFA;
+        }
+
+        /* --- Status Badges --- */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Utility classes for statuses - you can dynamically apply these via Thymeleaf logic if desired, 
+           or just rely on the fallback styling below */
+        .status-cell[data-status="NEW"] .badge { background: var(--info-bg); color: var(--info-text); }
+        .status-cell[data-status="BAKING"] .badge { background: var(--warning-bg); color: var(--warning-text); }
+        .status-cell[data-status="DELIVERED"] .badge { background: var(--success-bg); color: var(--success-text); }
+        
+        /* Fallback generic badge style */
+        .badge-generic {
+            background: #EEEEEE;
+            color: #616161;
+        }
+
+        /* --- Inline Form Actions --- */
+        .action-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .select-mini {
+            padding: 6px 8px;
+            font-size: 13px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: white;
+            max-width: 110px;
+        }
+
+        .btn-update {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: 1px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-update:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-light);
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--secondary);
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+            }
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-apply {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- Tabs -->
-  <div class="top">
-    <div class="tabs">
-      <a class="chip" href="/employee">🧭 Dashboard</a>
-      <span class="chip active">🔒 orders</span>
-      <a class="chip" href="/admin">🍪 products</a>
-    </div>
-  </div>
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <div class="brand">
+            <i class="fa-solid fa-cookie-bite"></i>
+            <span>CookieGram Staff</span>
+        </div>
+        <div class="nav-actions">
+            <!-- Back Button (Javascript history or link) -->
+            <a href="javascript:history.back()" class="btn-nav btn-back">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+            
+            <!-- Logout Button (Spring Security typically uses POST for logout, so we wrap it or use a form) -->
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <button type="submit" class="btn-nav btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </nav>
 
-  <h2 class="section-title">orders list</h2>
-  <p class="sub">active orders of last hour till now</p>
+    <div class="container">
 
-  <div class="grid">
+        <header>
+            <h2>Order Management</h2>
+            <p>View and update the status of outgoing cookie deliveries.</p>
+        </header>
 
-    <!-- left: current order -->
-    <div class="card soft">
-      <div class="pad">
-        <div class="h">Current order <span class="order-id">2934u8ju</span></div>
-        <p class="sub" style="margin-top:-6px">process of current order from preparing to delivery</p>
+        <!-- 🔍 Filter Section -->
+        <div class="filters-card">
+            <form th:action="@{/employee}" method="get" class="filters">
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select name="status" class="form-control">
+                        <option value="" th:selected="${selectedStatus} == null">All Statuses</option>
+                        <option th:each="s : ${allStatuses}"
+                                th:value="${s}"
+                                th:text="${s}"
+                                th:selected="${selectedStatus} == ${s}">
+                            Pending
+                        </option>
+                        <!-- Dummy option for preview only -->
+                        <option value="NEW" th:remove="all">New</option>
+                        <option value="BAKING" th:remove="all">Baking</option>
+                    </select>
+                </div>
 
-        <div class="stages">
-          <div class="stage"><span class="dot"></span> received</div>
-          <div class="stage prep"><span class="dot"></span> prepared</div>
-          <div class="stage ship"><span class="dot"></span> shipped</div>
+                <div class="filter-group">
+                    <label>From Date</label>
+                    <input type="date" name="fromDate" class="form-control" th:value="${fromDate}">
+                </div>
+
+                <div class="filter-group">
+                    <label>To Date</label>
+                    <input type="date" name="toDate" class="form-control" th:value="${toDate}">
+                </div>
+
+                <button type="submit" class="btn-apply">
+                    <i class="fa-solid fa-filter"></i> Apply Filters
+                </button>
+            </form>
         </div>
 
-        <div class="items">
-          <div class="row"><div class="pill">Vanilla</div><div class="qty">3</div></div>
-          <div class="row"><div class="pill">Ninja Fruit</div><div class="qty">1</div></div>
-          <div class="row"><div class="pill">Chocolate Chip</div><div class="qty">2</div></div>
-          <div class="row"><div class="pill">Mango</div><div class="qty">2</div></div>
+        <!-- 📋 Orders Table -->
+        <div class="table-container" th:if="${orders != null and !orders.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sender</th>
+                        <th>Recipient</th>
+                        <th>Cookie Type</th>
+                        <th>Qty</th>
+                        <th>Delivery Date</th>
+                        <th>Current Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+    <tr th:each="o : ${orders}">
+        
+        <td style="font-family: monospace; color: var(--text-light);">
+            <a th:href="@{'/employee/order/' + ${o.id}}"
+               th:text="${'#' + o.id}"
+               style="color: var(--text-light); text-decoration: none;">
+               #123
+            </a>
+        </td>
+
+        <td>
+            <div style="font-weight: 500;" th:text="${o.senderName}">Alice Smith</div>
+        </td>
+
+        <td th:text="${o.recipientName}">Bob Jones</td>
+
+        <td>
+            <i class="fa-solid fa-cookie" style="color: var(--secondary); margin-right: 6px;"></i>
+            <span th:text="${o.cookieType}">Choc Chip</span>
+        </td>
+
+        <td th:text="${o.quantity}">12</td>
+
+        <td th:text="${o.deliveryDate}">Dec 12, 2025</td>
+        
+        <td class="status-cell" th:attr="data-status=${o.status}">
+            <span class="badge badge-generic" th:text="${o.status}">NEW</span>
+        </td>
+        
+        <td>
+            <form class="action-form"
+                  th:action="@{'/employee/order/' + ${o.id} + '/status'}"
+                  method="post">
+                <select name="status" class="select-mini">
+                    <option th:each="s : ${allStatuses}"
+                            th:value="${s}"
+                            th:text="${s}"
+                            th:selected="${s} == ${o.status}">
+                        Status
+                    </option>
+                </select>
+                <button type="submit" class="btn-update">Update</button>
+            </form>
+        </td>
+    </tr>
+</tbody>
+            </table>
         </div>
 
-        <div class="info">
-          <div class="box">
-            <div style="font-weight:800;margin-bottom:4px">Delivering address</div>
-            <div>street 123 area 2</div>
-            <div style="margin-top:6px;font-size:.95rem">Phone &nbsp; <strong>+1 123 456 7890</strong></div>
-          </div>
-          <div class="price">
-            <div class="tot">86.09</div>
-            <div class="curr">CAD</div>
-          </div>
+        <!-- Empty State -->
+        <div class="empty-state" th:if="${orders == null or orders.isEmpty()}">
+            <i class="fa-solid fa-folder-open"></i>
+            <h3>No orders found</h3>
+            <p>Try adjusting your filters to see more results.</p>
         </div>
-      </div>
-    </div>
-
-    <!-- right: lists -->
-    <div class="stack">
-
-      <div class="list">
-        <h4>Orders list</h4>
-        <div class="small-note">next orders that is</div>
-        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
-        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
-        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
-        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
-      </div>
-
-      <div class="list">
-        <h4>Shipped orders</h4>
-        <div class="small-note">orders that has been shipped within 40 min</div>
-        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
-        <div class="cell"><span>Order</span><a class="link" href="#">2934u8ju</a></div>
-      </div>
 
     </div>
-  </div>
-</div>
+
 </body>
 </html>

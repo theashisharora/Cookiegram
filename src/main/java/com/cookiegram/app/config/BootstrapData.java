@@ -11,7 +11,7 @@ import com.cookiegram.app.services.PromotionService;
 import lombok.AllArgsConstructor;
 
 @Component
-@AllArgsConstructor	
+@AllArgsConstructor
 public class BootstrapData implements CommandLineRunner {
 
     private final PromotionService service;
@@ -19,15 +19,35 @@ public class BootstrapData implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         var active = service.getActivePromotions();
+
         if (active == null || active.isEmpty()) {
+
             service.save(new Promotion(
-                    null, "Buy 2 Get 1 Free CookieGram",
+                    null,
+                    "Buy 2 Get 1 Free CookieGram",
                     "Send fresh cookies to someone you love. Includes a custom message card.",
-                    "https://via.placeholder.com/300x200.png?text=CookieGram+Promo",
+                    "/images/cookies/choco-chip.jpg",
                     LocalDate.now().minusDays(1),
                     LocalDate.now().plusDays(7)
             ));
+
+            service.save(new Promotion(
+                    null,
+                    "Hot Chocolate Celebration",
+                    "Limited edition red velvet CookieGram for special moments.",
+                    "/images/cookies/red-velvet.jpg",
+                    LocalDate.now().minusDays(2),
+                    LocalDate.now().plusDays(5)
+            ));
+
+            service.save(new Promotion(
+                    null,
+                    "Sprinkle Choco Offer",
+                    "Colorful sprinkle cookies that make every day a party.",
+                    "/images/cookies/sprinkle-delight.jpg",
+                    LocalDate.now().minusDays(3),
+                    LocalDate.now().plusDays(10)
+            ));
         }
     }
-
 }

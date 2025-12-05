@@ -1,12 +1,157 @@
 <!doctype html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8"/>
-    <title>Customer Home - CookieGram</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Customer • CookieGram</title>
+  <style>
+    :root{
+      --bg:#fff7ec; --panel:#5a3a28; --ink:#3b2b20; --muted:#6b4d3a; --line:#eadcc7;
+      --card:#ffffff; --chip:#fde7bd; --btn:#c8a361; --btn-d:#a9893f;
+    }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:1200px;margin:22px auto;padding:0 16px}
+
+    /* top tabs */
+    .top{background:var(--panel);color:#fff;border-radius:10px;padding:12px;display:flex;gap:.6rem;flex-wrap:wrap}
+    .chip{background:#fff;border:1px solid var(--line);color:var(--panel);border-radius:999px;padding:.5rem .85rem;font-weight:700}
+    .chip.active{background:var(--chip)}
+    .spacer{flex:1}
+    .pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:.45rem .8rem;color:var(--panel);text-decoration:none}
+
+    .greet{margin:16px 0 10px;font-size:1.6rem;font-weight:800}
+    .sub{margin:0 0 16px;color:var(--muted)}
+
+    /* grid */
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    @media (max-width:960px){ .grid{grid-template-columns:1fr} }
+
+    .card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.06)}
+    .pad{padding:14px}
+    .h{font-weight:800;margin:0 0 8px}
+    .row{display:flex;gap:.6rem;align-items:center}
+    .btn{display:inline-block;background:var(--btn);color:#fff;border:none;border-radius:10px;padding:.55rem .9rem;font-weight:800;cursor:pointer}
+    .btn:hover{background:var(--btn-d)}
+
+    /* recommended promos */
+    .promos{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .promo img{width:100%;height:130px;object-fit:cover;border-radius:10px}
+    .muted{color:var(--muted)}
+    .price{font-weight:800;margin:.25rem 0}
+
+    /* right column widgets */
+    .widget .title{font-weight:800;margin:0 0 6px}
+    .chipline{display:flex;gap:.4rem;flex-wrap:wrap}
+    .mini{background:#fff;border:1px solid var(--line);border-radius:8px;padding:.35rem .6rem}
+    .list{display:flex;flex-direction:column;gap:.5rem}
+    .item{display:flex;justify-content:space-between;align-items:center;background:#fff7ea;border:1px solid var(--line);border-radius:10px;padding:.55rem .8rem}
+    .status{padding:.2rem .5rem;border-radius:8px;border:1px solid var(--line);background:#f7ead5;font-size:.85rem}
+  </style>
 </head>
-<body style="font-family:system-ui,Arial,sans-serif;background:#fff8f2;padding:2rem;">
-<h1>🍪 Welcome, Customer!</h1>
-<p>This is your customer landing page. In future sprints you'll place and track CookieGram orders here.</p>
-<p><a href="/">Back to Home</a> | <a href="/logout">Log Out</a></p>
+<body>
+<div class="wrap">
+
+  <!-- top tabs -->
+  <div class="top">
+    <span class="chip active">🏠 dashboard</span>
+    <a class="chip" href="/order">📦 orders</a>
+    <a class="chip" href="/profile">👤 profile</a>
+    <span class="spacer"></span>
+    <a class="pill" href="/logout">⎋ logout</a>
+  </div>
+
+  <h2 class="greet">Welcome back, <span th:text="${customerName}">Cookie Lover</span>! 🍪</h2>
+  <p class="sub">Here’s a quick look at your cart, recent orders, and sweet recommendations.</p>
+
+  <div class="grid">
+    <!-- LEFT: recommendations + recent orders -->
+    <div class="col">
+
+      <!-- Recommended for you (dynamic promos ok) -->
+      <div class="card">
+        <div class="pad">
+          <h3 class="h">Recommended for you</h3>
+          <div class="promos" th:if="${promotions != null and !promotions.isEmpty()}">
+            <div class="promo card" th:each="p : ${promotions}">
+              <div class="pad" style="padding-bottom:0">
+                <img th:src="${p.imageUrl}" alt="promo"/>
+              </div>
+              <div class="pad" style="padding-top:.6rem">
+                <div class="muted" th:text="${p.title}">Chocolate Chip</div>
+                <div class="price" th:text="${'CAD ' + (#numbers.formatDecimal(p.price?:10,1,2))}">CAD 10.00</div>
+                <form th:action="@{/cart/add}" method="post">
+                  <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+                  <input type="hidden" name="sku" th:value="${p.id}"/>
+                  <button class="btn" type="submit">Add to cart</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <p class="muted" th:if="${promotions == null or promotions.isEmpty()}">No fresh recommendations yet — they’ll pop up as you start ordering.</p>
+        </div>
+      </div>
+
+      <!-- Recent orders (placeholder data for Sprint-1) -->
+      <div class="card" style="margin-top:12px">
+        <div class="pad">
+          <h3 class="h">Recent orders</h3>
+          <div class="list" th:if="${orders != null}">
+            <div class="item" th:each="o : ${orders}">
+              <span>Order <strong th:text="${o.code}">A1234</strong></span>
+              <span class="status" th:text="${o.status}">shipped</span>
+            </div>
+          </div>
+          <div class="list" th:if="${orders == null}">
+            <div class="item"><span>Order <strong>CG-23001</strong></span><span class="status">delivered</span></div>
+            <div class="item"><span>Order <strong>CG-23002</strong></span><span class="status">shipped</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: cart + addresses -->
+    <div class="col">
+
+      <div class="card widget">
+        <div class="pad">
+          <div class="title">Your cart</div>
+          <div class="list" th:if="${cartItems != null}">
+            <div class="item" th:each="c : ${cartItems}">
+              <span th:text="${c.name}">Chocolate Chip (x2)</span>
+              <span class="status" th:text="${'CAD ' + #numbers.formatDecimal(c.subtotal,1,2)}">CAD 20.00</span>
+            </div>
+          </div>
+          <div class="list" th:if="${cartItems == null}">
+            <div class="item"><span>Vanilla (x2)</span><span class="status">CAD 18.00</span></div>
+          </div>
+          <div class="row" style="justify-content:space-between;margin-top:.6rem">
+            <span class="muted">Total</span>
+            <strong th:text="${cartTotal != null ? 'CAD ' + #numbers.formatDecimal(cartTotal,1,2) : 'CAD 18.00'}">CAD 18.00</strong>
+          </div>
+          <div style="margin-top:.7rem">
+            <a class="btn" href="/checkout">Checkout</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card widget" style="margin-top:12px">
+        <div class="pad">
+          <div class="title">Saved addresses</div>
+          <div class="chipline" th:if="${addresses != null}">
+            <span class="mini" th:each="a : ${addresses}" th:text="${a.label}">Home • 12 King St</span>
+          </div>
+          <div class="chipline" th:if="${addresses == null}">
+            <span class="mini">Home • 12 King St</span>
+            <span class="mini">Work • 55 Bay Ave</span>
+          </div>
+          <div style="margin-top:.7rem"><a class="btn" href="/profile">Manage</a></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 </body>
 </html>

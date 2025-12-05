@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Pay for your CookieGram</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#fff7ec;margin:0;color:#3b2b20;}
+    .wrap{max-width:700px;margin:2rem auto;padding:1.5rem;background:#fff;border-radius:14px;border:1px solid #eadcc7;}
+    h1{margin-top:0;}
+    .row{display:flex;justify-content:space-between;margin:.4rem 0;}
+    .total{font-size:1.3rem;font-weight:800;}
+    button{border:none;border-radius:999px;padding:.6rem 1.2rem;background:#c8a361;color:#fff;
+      cursor:pointer;font-weight:700;}
+    button:hover{background:#a9893f;}
+    a{color:#6b4d3a;text-decoration:none;font-size:.9rem;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Complete your payment</h1>
+
+  <p>Order <strong th:text="${'#' + order.id}">#1</strong></p>
+
+  <div class="row">
+    <span>Cookie type</span>
+    <span th:text="${order.cookieType}">Chocolate Chip</span>
+  </div>
+  <div class="row">
+    <span>Quantity</span>
+    <span th:text="${order.quantity}">2</span>
+  </div>
+  <div class="row">
+    <span>Subtotal</span>
+    <span th:text="${'CAD ' + #numbers.formatDecimal(order.subtotal,1,2)}">CAD 40.00</span>
+  </div>
+  <div class="row">
+    <span>Tax</span>
+    <span th:text="${'CAD ' + #numbers.formatDecimal(order.tax,1,2)}">CAD 5.20</span>
+  </div>
+  <div class="row total">
+    <span>Total</span>
+    <span th:text="${'CAD ' + #numbers.formatDecimal(order.total,1,2)}">CAD 45.20</span>
+  </div>
+
+  <form th:action="@{'/pay/' + ${order.id}}" method="post" style="margin-top:1.2rem;">
+    <button type="submit">Pay now</button>
+  </form>
+
+  <p style="margin-top:1rem;">
+    <a href="/">← Back to home</a>
+  </p>
+</div>
+</body>
+</html>
